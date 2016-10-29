@@ -7,8 +7,8 @@
 #define DHTTYPE DHT22 
 
 byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(172, 16, 1, 100);
-IPAddress server(172, 16, 1, 93);
+IPAddress ip(192, 168, 1, 100);
+IPAddress server(192, 168, 1, 93);
 
 float humidity;
 float temperature;
@@ -21,33 +21,55 @@ void setup() {
   Serial.begin(9600);
   client.setServer(server, 1883);
 
-  Ethernet.begin(mac, ip);    
+  if(Ethernet.begin(mac) == 0) {
+    Ethernet.begin(mac, ip);
+  }       
+  Serial.print("Ethernet client is at ");
+  Serial.println(Ethernet.localIP());
+  
   delay(1500);
 
   dht.begin();
 }
 
 void loop() {
+
   readSensor();
   publishData();
-  delay(5000);
+  delay(10000);
 }
 
 void readSensor() {
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
+  Serial.print("Sensor reading: Humidity = ");
+  Serial.print(humidity);
+  Serial.print("% Temperature = ");
+  Serial.print(temperature);
+  Serial.print("C");
+  Serial.println();
 }
 
 void publishData() {
 
   if(!client.connected()) {
-    client.connect("arduino");
+    Serial.print("Attempting to connect to ");
+    Serial.print(server);
+    Serial.println("...");
+    if(!client.connect("arduino")) {
+      Serial.print("Failed with state: ");
+      Serial.print(client.state());
+      Serial.println();
+    } else {
+      Serial.println("Connected.");
+    }
   }
 
   if(client.connected()) {
     String json = createPayload();
     char payload[100];
     json.toCharArray(payload, 100);
+    Serial.println("Publishing data...");
     client.publish("sensor", payload);
   }
 
