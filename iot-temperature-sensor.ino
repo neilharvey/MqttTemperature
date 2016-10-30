@@ -8,7 +8,10 @@
 
 byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 100);
-IPAddress server(192, 168, 1, 93);
+//IPAddress server(192, 168, 1, 93);
+char server[] = "broker.hivemq.com";
+char clientId[] = "gfd5dsh6d3r";
+char topic[] = "iot-temperature-sensor";
 
 float humidity;
 float temperature;
@@ -36,32 +39,27 @@ void loop() {
 
   readSensor();
   publishData();
-  delay(10000);
+  delay(5000);
 }
 
 void readSensor() {
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
-  Serial.print("Sensor reading: Humidity = ");
-  Serial.print(humidity);
-  Serial.print("% Temperature = ");
-  Serial.print(temperature);
-  Serial.print("C");
-  Serial.println();
 }
 
 void publishData() {
 
   if(!client.connected()) {
-    Serial.print("Attempting to connect to ");
-    Serial.print(server);
-    Serial.println("...");
-    if(!client.connect("arduino")) {
-      Serial.print("Failed with state: ");
-      Serial.print(client.state());
-      Serial.println();
+    if(client.connect(clientId)) {
+      Serial.print("Connected to ");
+      Serial.print(server);
+      Serial.print(" with client id ");
+      Serial.println(clientId);
     } else {
-      Serial.println("Connected.");
+      Serial.print("Failed to connect to ");
+      Serial.print(server);
+      Serial.print(" with state ");
+      Serial.println(client.state());      
     }
   }
 
@@ -69,8 +67,9 @@ void publishData() {
     String json = createPayload();
     char payload[100];
     json.toCharArray(payload, 100);
-    Serial.println("Publishing data...");
-    client.publish("sensor", payload);
+    Serial.print("Publishing data for topic ");
+    Serial.println(topic);
+    client.publish(topic, payload);
   }
 
   String payload = createPayload();
@@ -88,5 +87,6 @@ String createPayload() {
 
   return payload;
 }
+
 
 
