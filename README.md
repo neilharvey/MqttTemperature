@@ -1,4 +1,4 @@
-# iot-temperature-sensor
+# mqtt-temperature-sensor
 A simple project to write data from a temperature sensor to an MQTT broker.  This can either be a broker on the local network, such as [Mosquitto](https://mosquitto.org/) or the cloud based broker of your choice.
 
 ## Components
