@@ -11,7 +11,7 @@ The following components are used for this project:
 
 The layout is fairly simple.  With the enternet shield mounted on the Arduino UNO, connect the VDD pin directly to 5V, the GND to GND and the DATA pin to pin 3 of the Arduino board as follows:
 
-![breadboard layout](https://cdn.rawgit.com/neilharvey/iot-temperature-sensor/master/breadboard.svg)
+![schematic](https://cdn.rawgit.com/neilharvey/iot-temperature-sensor/master/schematic.svg)
 
 ## Uploading to an Arduino Board
 
